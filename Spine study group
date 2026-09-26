@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spine Meet: Verified School & Teen Group Study & Video Network (≤ 5km)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#f0fdf4', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 900: '#14532d' },
+                        accent: { 500: '#3b82f6', 600: '#2563eb' }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+
+    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-500 to-accent-500 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-brand-500/20">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-black text-base tracking-tight leading-tight flex items-center gap-2">
+                        Spine Meet <span class="bg-brand-500/20 text-brand-400 text-[10px] px-2 py-0.5 rounded-full border border-brand-500/30">Under 20 Only</span>
+                    </h1>
+                    <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Verified School Study & Video Mesh (≤ 5km)</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleMeshMode()" id="meshIndicatorBtn" class="hidden sm:flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 text-xs font-bold text-slate-300 hover:border-brand-500 transition cursor-pointer">
+                    <i class="fa-solid fa-bluetooth text-accent-400 animate-pulse"></i>
+                    <span id="meshStatusText">Cloud Mode (Wi-Fi)</span>
+                </button>
+                <button onclick="openLocationModal()" class="hidden sm:flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 text-xs font-bold text-slate-300 hover:border-brand-500 transition cursor-pointer">
+                    <i class="fa-solid fa-location-crosshairs text-brand-400"></i>
+                    <span id="headerLocationText">Gurgaon (Sector 56)</span>
+                </button>
+                <button onclick="openPostModal()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-brand-600/30 transition cursor-pointer flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> <span>Create Study Meet</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div id="verificationModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-brand-500/30 shadow-2xl space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-14 h-14 bg-brand-500/20 text-brand-400 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-brand-500/30">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <h2 class="text-xl font-black">Mandatory School Student Verification</h2>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Spine Meet is exclusively for school students and teens under 20 (boys and girls). Enter your school and district details to access hyper-local (1-5km) study circles.
+                </p>
+            </div>
+            <form onsubmit="handleVerificationSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold uppercase text-slate-400 mb-1">Full Student Name *</label>
+                    <input type="text" id="verifyName" required placeholder="e.g. Ananya Sharma / Aarav Patel" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold uppercase text-slate-400 mb-1">Age (Must be < 20) *</label>
+                        <input type="number" id="verifyAge" required max="19" min="13" placeholder="17" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block font-bold uppercase text-slate-400 mb-1">Standard / Grade *</label>
+                        <select id="verifyGrade" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm">
+                            <option value="Class 11">Class 11</option>
+                            <option value="Class 12" selected>Class 12</option>
+                            <option value="Class 10">Class 10</option>
+                            <option value="Junior College">Junior College (Age < 20)</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold uppercase text-slate-400 mb-1">School / Institution Name *</label>
+                    <input type="text" id="verifySchool" required placeholder="e.g. Modern School, DPS, St. Xavier's, Kendriya Vidyalaya..." class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold uppercase text-slate-400 mb-1">District / City *</label>
+                        <input type="text" id="verifyDistrict" required value="Gurgaon" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block font-bold uppercase text-slate-400 mb-1">Block / Pin Code / Village *</label>
+                        <input type="text" id="verifyPin" required value="Sector 56 (122011)" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold uppercase text-slate-400 mb-1">Upload School ID Card (Image/PDF) *</label>
+                    <input type="file" id="verifyIdFile" required accept="image/*" class="w-full px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-300 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-600 file:text-white hover:file:bg-brand-700 cursor-pointer">
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-black rounded-2xl text-sm transition shadow-lg shadow-brand-600/30 cursor-pointer">
+                    Verify School ID & Enter Spine Meet 🚀
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <div class="bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900 rounded-3xl p-6 sm:p-8 border border-brand-500/30 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="space-y-2">
+                <div class="inline-flex items-center gap-2 bg-brand-500/20 text-brand-400 border border-brand-500/30 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
+                    <i class="fa-solid fa-shield-halved"></i> 100% Verified School Teens (Under 20) • Boys & Girls
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black tracking-tight">Neighborhood Group Study, Chat & Video Rooms</h2>
+                <p class="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+                    Meet genuine school peers for board exams, JEE/NEET doubts, and projects within your <strong class="text-brand-400">District & Block (Max 1-5 km Radius)</strong>. Use online chat, voice notes, live video study calls, or Bluetooth mesh during power cuts!
+                </p>
+            </div>
+            <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl min-w-[280px] text-center space-y-2 shadow-inner">
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Your Verified Proximity Zone</span>
+                <span id="heroLocationDisplay" class="text-base font-black text-brand-400 block">Gurgaon : Sector 56</span>
+                <span class="text-xs text-slate-400 block"><i class="fa-solid fa-circle-check text-brand-500 mr-1"></i> Max 5 km Radius Active</span>
+                <button onclick="openLocationModal()" class="text-[11px] text-accent-400 font-bold underline hover:text-accent-300 cursor-pointer pt-1 block mx-auto">Change District / Pin</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
+                <input type="text" id="searchInput" oninput="renderStudyFeed()" placeholder="Search subject, school or topic..." class="w-full pl-11 pr-4 py-3 bg-slate-900 border border-slate-800 rounded-2xl text-sm font-medium outline-none focus:ring-2 focus:ring-brand-500 text-slate-100">
+            </div>
+            <div>
+                <select id="districtFilter" onchange="renderStudyFeed()" class="w-full py-3 px-4 bg-slate-900 border border-slate-800 rounded-2xl text-sm font-medium outline-none text-slate-200">
+                    <option value="ALL">All Indian Districts (Pan-India)</option>
+                    <option value="Gurgaon">Gurgaon (Haryana)</option>
+                    <option value="New Delhi">New Delhi (NCR)</option>
+                    <option value="Mumbai">Mumbai (Maharashtra)</option>
+                    <option value="Bengaluru">Bengaluru (Karnataka)</option>
+                    <option value="Noida">Noida (Uttar Pradesh)</option>
+                    <option value="Pune">Pune (Maharashtra)</option>
+                    <option value="Kolkata">Kolkata (West Bengal)</option>
+                    <option value="Chennai">Chennai (Tamil Nadu)</option>
+                    <option value="Hyderabad">Hyderabad (Telangana)</option>
+                    <option value="Jaipur">Jaipur (Rajasthan)</option>
+                    <option value="Patna">Patna (Bihar)</option>
+                </select>
+            </div>
+            <div>
+                <select id="subjectFilter" onchange="renderStudyFeed()" class="w-full py-3 px-4 bg-slate-900 border border-slate-800 rounded-2xl text-sm font-medium outline-none text-slate-200">
+                    <option value="ALL">All Study Subjects</option>
+                    <option value="Physics & Math">Physics & Math (JEE/Boards)</option>
+                    <option value="Biology & Chemistry">Biology & Chemistry (NEET)</option>
+                    <option value="Computer Science">Computer Science & Coding</option>
+                    <option value="Humanities & English">Humanities & English Lit</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="studyGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+    </main>
+
+    <div id="locationModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-3xl max-w-md w-full p-6 sm:p-8 border border-brand-500/30 shadow-2xl space-y-6">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-black flex items-center gap-2"><i class="fa-solid fa-map-pin text-brand-400"></i> Set District & Block (Max 5km)</h3>
+                <button onclick="closeLocationModal()" class="text-slate-400 hover:text-slate-200 cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold uppercase text-slate-400 mb-1">District / City *</label>
+                    <input type="text" id="modalDistrict" value="Gurgaon" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm font-medium">
+                </div>
+                <div>
+                    <label class="block font-bold uppercase text-slate-400 mb-1">Block / Sector / Village *</label>
+                    <input type="text" id="modalBlock" value="Sector 56" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm font-medium">
+                </div>
+                <button onclick="saveLocationSelection()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-black rounded-2xl text-sm transition shadow-lg shadow-brand-600/30 cursor-pointer">Lock 5km Proximity Zone 📍</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="postModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-brand-500/30 shadow-2xl space-y-6">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-black flex items-center gap-2"><i class="fa-solid fa-book-open-reader text-brand-400"></i> Create Group Study Session</h3>
+                <button onclick="closePostModal()" class="text-slate-400 hover:text-slate-200 cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handlePostSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold uppercase text-slate-400 mb-1">Study Topic / Title *</label>
+                    <input type="text" id="postTitle" required placeholder="e.g. Class 12 Physics Electrodynamics Numerical Solving" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold uppercase text-slate-400 mb-1">District *</label>
+                        <input type="text" id="postDistrict" value="Gurgaon" required class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm">
+                    </div>
+                    <div>
+                        <label class="block font-bold uppercase text-slate-400 mb-1">Block / Village *</label>
+                        <input type="text" id="postBlock" value="Sector 56" required class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold uppercase text-slate-400 mb-1">Subject Category *</label>
+                        <select id="postSubject" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm">
+                            <option value="Physics & Math">Physics & Math</option>
+                            <option value="Biology & Chemistry">Biology & Chemistry</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Humanities & English">Humanities & English</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold uppercase text-slate-400 mb-1">Proximity Distance *</label>
+                        <input type="text" id="postDistance" value="1.2 km away" required class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold uppercase text-slate-400 mb-1">Safe Public Study Venue (Library / School / Cafe) *</label>
+                    <textarea id="postDesc" required rows="3" placeholder="Describe the study agenda and suggest a safe public venue within 5km..." class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-slate-100 text-sm"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-black rounded-2xl text-sm transition shadow-lg shadow-brand-600/30 cursor-pointer">Publish Study Circle 📚</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="chatModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-3xl max-w-xl w-full p-6 border border-brand-500/30 shadow-2xl flex flex-col h-[520px]">
+            <div class="flex justify-between items-center pb-4 border-b border-slate-800">
+                <div>
+                    <h3 id="chatModalTitle" class="font-black text-base text-slate-100">Study Circle Chat</h3>
+                    <span class="text-[10px] text-brand-400 font-bold uppercase tracking-wider"><i class="fa-solid fa-circle text-[8px] mr-1"></i> Verified Neighborhood Group (Boys & Girls)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openVideoCallModal()" class="px-3 py-1.5 bg-accent-600 hover:bg-accent-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-video"></i> <span>Video Call</span>
+                    </button>
+                    <button onclick="closeChatModal()" class="text-slate-400 hover:text-slate-200 cursor-pointer p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+                </div>
+            </div>
+            <div id="chatMessages" class="flex-1 overflow-y-auto py-4 space-y-3 text-xs pr-2">
+                <div class="bg-slate-800/80 p-3 rounded-2xl max-w-[80%] space-y-1">
+                    <span class="font-black text-brand-400">Rohan V. (DPS Gurgaon, Organizer)</span>
+                    <p class="text-slate-200">Hey everyone! We are meeting at the Sector 56 Public Library study desk at 4:00 PM. Bring your NCERT textbooks.</p>
+                    <span class="text-[9px] text-slate-400 block text-right">3:15 PM</span>
+                </div>
+            </div>
+            <div class="pt-3 border-t border-slate-800 flex items-center gap-2">
+                <button onclick="sendVoiceNote()" class="p-3 bg-slate-800 hover:bg-brand-600 hover:text-white text-slate-300 rounded-2xl transition cursor-pointer text-sm" title="Send Voice Note">
+                    <i class="fa-solid fa-microphone"></i>
+                </button>
+                <input type="text" id="chatInput" placeholder="Type a study message or doubt..." class="flex-1 px-4 py-3 bg-slate-800 border border-slate-700 rounded-2xl outline-none text-xs text-slate-100">
+                <button onclick="sendChatMessage()" class="px-5 py-3 bg-brand-600 hover:bg-brand-700 text-white font-black rounded-2xl text-xs transition cursor-pointer shadow-md">
+                    Send
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="videoModal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-lg z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 rounded-3xl max-w-4xl w-full p-6 border border-brand-500/30 shadow-2xl flex flex-col h-[600px]">
+            <div class="flex justify-between items-center pb-4 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                    <h3 class="font-black text-base text-slate-100">Live Peer Video Study Room (≤ 5km)</h3>
+                </div>
+                <button onclick="closeVideoCallModal()" class="text-slate-400 hover:text-slate-200 cursor-pointer text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 items-center justify-center">
+                <div class="bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center h-full min-h-[220px]">
+                    <div class="text-center space-y-2">
+                        <div class="w-16 h-16 bg-brand-500/20 text-brand-400 rounded-full flex items-center justify-center text-2xl mx-auto border border-brand-500/30">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-300 block">You (Verified Peer)</span>
+                        <span class="text-[10px] text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-full border border-brand-500/20">Mic Active 🎙️</span>
+                    </div>
+                </div>
+                <div class="bg-slate-950 rounded-2xl border border-slate-800 relative flex items-center justify-center h-full min-h-[220px]">
+                    <div class="text-center space-y-2">
+                        <div class="w-16 h-16 bg-accent-500/20 text-accent-400 rounded-full flex items-center justify-center text-2xl mx-auto border border-accent-500/30">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-300 block">Ananya S. (Study Partner)</span>
+                        <span class="text-[10px] text-accent-400 bg-accent-500/10 px-2 py-0.5 rounded-full border border-accent-500/20">Screen Sharing 📊</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-4 border-t border-slate-800 flex justify-center items-center gap-4">
+                <button onclick="toggleAudioMute()" id="muteBtn" class="p-4 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-2xl transition cursor-pointer text-sm shadow-md">
+                    <i class="fa-solid fa-microphone"></i>
+                </button>
+                <button onclick="closeVideoCallModal()" class="px-6 py-3.5 bg-red-600 hover:bg-red-700 text-white font-black rounded-2xl text-xs transition shadow-lg cursor-pointer flex items-center gap-2">
+                    <i class="fa-solid fa-phone-slash"></i> <span>Leave Video Room</span>
+                </button>
+                <button onclick="toggleVideoCam()" id="camBtn" class="p-4 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-2xl transition cursor-pointer text-sm shadow-md">
+                    <i class="fa-solid fa-video"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-brand-500 text-white px-5 py-3 rounded-2xl shadow-2xl font-black text-xs flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-sm"></i>
+        <span id="toastMsg">Action completed successfully!</span>
+    </div>
+
+    <script>
+        let isVerified = localStorage.getItem('spine_meet_verified') === 'true';
+        let isMeshMode = false;
+
+        let studySessions = JSON.parse(localStorage.getItem('spine_meet_sessions')) || [
+            {
+                id: 's1',
+                title: 'Class 12 Physics Electrodynamics Problem Solving',
+                district: 'Gurgaon',
+                block: 'Sector 56',
+                distance: '0.8 km away',
+                subject: 'Physics & Math',
+                author: 'Rohan V. (DPS Gurgaon, Grade 12)',
+                desc: 'Solving past 10 years board derivation questions and HC Verma numericals together at Sector 56 Public Library.',
+                time: 'Today, 4:00 PM'
+            },
+            {
+                id: 's2',
+                title: 'NEET Biology Diagram & Genetics Revision',
+                district: 'Gurgaon',
+                block: 'Sector 28',
+                distance: '2.1 km away',
+                subject: 'Biology & Chemistry',
+                author: 'Ananya S. (The Heritage School, Grade 12)',
+                desc: 'Group quiz and flashcard revision for genetics and molecular biology chapters.',
+                time: 'Saturday, 11:00 AM'
+            },
+            {
+                id: 's3',
+                title: 'Python & Data Structures Project Meet',
+                district: 'New Delhi',
+                block: 'Vasant Kunj',
+                distance: '1.5 km away',
+                subject: 'Computer Science',
+                author: 'Kabir M. (Modern School, Grade 11)',
+                desc: 'Collaborating on school CS practical projects and sorting algorithms.',
+                time: 'Sunday, 2:00 PM'
+            },
+            {
+                id: 's4',
+                title: 'Class 12 English Literature Debate & Answer Writing',
+                district: 'Mumbai',
+                block: 'Bandra West',
+                distance: '1.2 km away',
+                subject: 'Humanities & English',
+                author: 'Sana K. (Campion School, Grade 12)',
+                desc: 'Reviewing Flamingo textbook answers and essay structuring for board exams.',
+                time: 'Saturday, 5:30 PM'
+            }
+        ];
+
+        let userLocation = JSON.parse(localStorage.getItem('spine_meet_loc')) || {
+            district: 'Gurgaon',
+            block: 'Sector 56'
+        };
+
+        window.onload = function() {
+            if (!isVerified) {
+                document.getElementById('verificationModal').classList.remove('hidden');
+            } else {
+                document.getElementById('verificationModal').classList.add('hidden');
+                renderStudyFeed();
+            }
+        };
+
+        function handleVerificationSubmit(e) {
+            e.preventDefault();
+            const age = parseInt(document.getElementById('verifyAge').value);
+            if (age >= 20) {
+                showToast("Spine Meet is strictly restricted to students under 20 years of age!");
+                return;
+            }
+            isVerified = true;
+            localStorage.setItem('spine_meet_verified', 'true');
+            userLocation = {
+                district: document.getElementById('verifyDistrict').value,
+                block: document.getElementById('verifyPin').value
+            };
+            localStorage.setItem('spine_meet_loc', JSON.stringify(userLocation));
+            document.getElementById('verificationModal').classList.add('hidden');
+            renderStudyFeed();
+            showToast("School ID verified successfully! Welcome to Spine Meet.");
+        }
+
+        function toggleMeshMode() {
+            isMeshMode = !isMeshMode;
+            const statusText = document.getElementById('meshStatusText');
+            const btn = document.getElementById('meshIndicatorBtn');
+            if (isMeshMode) {
+                statusText.textContent = "Bluetooth Mesh Active (Offline)";
+                btn.classList.add('border-accent-500', 'bg-accent-500/10');
+                showToast("Switched to Local Bluetooth / Wi-Fi Direct Mesh for power cuts!");
+            } else {
+                statusText.textContent = "Cloud Mode (Wi-Fi)";
+                btn.classList.remove('border-accent-500', 'bg-accent-500/10');
+                showToast("Switched back to standard internet cloud mode.");
+            }
+        }
+
+        function renderStudyFeed() {
+            const grid = document.getElementById('studyGrid');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const districtFilter = document.getElementById('districtFilter').value;
+            const subject = document.getElementById('subjectFilter').value;
+
+            document.getElementById('headerLocationText').textContent = `${userLocation.district} (${userLocation.block})`;
+            document.getElementById('heroLocationDisplay').textContent = `${userLocation.district} : ${userLocation.block}`;
+
+            const filtered = studySessions.filter(s => {
+                const matchSearch = s.title.toLowerCase().includes(search) || s.desc.toLowerCase().includes(search) || s.block.toLowerCase().includes(search);
+                const matchDist = districtFilter === 'ALL' || s.district === districtFilter;
+                const matchSub = subject === 'ALL' || s.subject === subject;
+                return matchSearch && matchDist && matchSub;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center space-y-3 bg-slate-900 rounded-3xl border border-slate-800">
+                        <div class="w-12 h-12 bg-slate-800 text-brand-400 rounded-2xl flex items-center justify-center text-xl mx-auto"><i class="fa-solid fa-radar"></i></div>
+                        <h4 class="font-bold text-base text-slate-300">No active study circles found within this district block.</h4>
+                        <p class="text-xs text-slate-400">Be the first to create a group study session for your school neighborhood!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(s => `
+                <div class="bg-slate-900 rounded-3xl border border-slate-800 hover:border-brand-500/50 transition-all p-6 flex flex-col justify-between space-y-4 shadow-xl">
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start gap-2">
+                            <span class="bg-brand-500/10 text-brand-400 border border-brand-500/20 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full">${s.subject}</span>
+                            <span class="text-xs font-bold text-slate-400 flex items-center gap-1"><i class="fa-solid fa-route text-brand-400"></i> ${s.distance}</span>
+                        </div>
+                        <h3 class="font-black text-lg leading-snug">${s.title}</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">${s.desc}</p>
+                    </div>
+                    <div class="space-y-3 pt-3 border-t border-slate-800/80">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-slate-400"><i class="fa-solid fa-user-shield text-brand-400 mr-1"></i> ${s.author}</span>
+                            <span class="text-brand-400 font-extrabold"><i class="fa-solid fa-map-pin mr-1"></i> ${s.block}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="openChatModal('${s.title}')" class="py-2.5 bg-slate-800 hover:bg-brand-600 hover:text-white text-slate-200 font-extrabold rounded-2xl text-xs transition shadow-md cursor-pointer flex items-center justify-center gap-1.5">
+                                <span>Chat</span> <i class="fa-solid fa-comments"></i>
+                            </button>
+                            <button onclick="openVideoCallModal()" class="py-2.5 bg-accent-600 hover:bg-accent-700 text-white font-extrabold rounded-2xl text-xs transition shadow-md cursor-pointer flex items-center justify-center gap-1.5">
+                                <span>Video</span> <i class="fa-solid fa-video"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openLocationModal() { document.getElementById('locationModal').classList.remove('hidden'); }
+        function closeLocationModal() { document.getElementById('locationModal').classList.add('hidden'); }
+
+        function saveLocationSelection() {
+            userLocation = {
+                district: document.getElementById('modalDistrict').value,
+                block: document.getElementById('modalBlock').value
+            };
+            localStorage.setItem('spine_meet_loc', JSON.stringify(userLocation));
+            closeLocationModal();
+            renderStudyFeed();
+            showToast(`Location updated to ${userLocation.district} (${userLocation.block}). 5km radius active!`);
+        }
+
+        function openPostModal() {
+            document.getElementById('postDistrict').value = userLocation.district;
+            document.getElementById('postBlock').value = userLocation.block;
+            document.getElementById('postModal').classList.remove('hidden');
+        }
+        function closePostModal() { document.getElementById('postModal').classList.add('hidden'); }
+
+        function handlePostSubmit(e) {
+            e.preventDefault();
+            const newSession = {
+                id: 's_' + Date.now(),
+                title: document.getElementById('postTitle').value,
+                district: document.getElementById('postDistrict').value,
+                block: document.getElementById('postBlock').value,
+                distance: document.getElementById('postDistance').value,
+                subject: document.getElementById('postSubject').value,
+                author: 'You (Verified School Student)',
+                desc: document.getElementById('postDesc').value,
+                time: 'Just Now'
+            };
+            studySessions.unshift(newSession);
+            localStorage.setItem('spine_meet_sessions', JSON.stringify(studySessions));
+            closePostModal();
+            renderStudyFeed();
+            showToast("Group study circle published within 5km neighborhood!");
+            e.target.reset();
+        }
+
+        function openChatModal(title) {
+            document.getElementById('chatModalTitle').textContent = title;
+            document.getElementById('chatModal').classList.remove('hidden');
+        }
+        function closeChatModal() { document.getElementById('chatModal').classList.add('hidden'); }
+
+        function openVideoCallModal() {
+            document.getElementById('videoModal').classList.remove('hidden');
+        }
+        function closeVideoCallModal() {
+            document.getElementById('videoModal').classList.add('hidden');
+        }
+
+        function toggleAudioMute() {
+            const btn = document.getElementById('muteBtn');
+            btn.classList.toggle('bg-red-600');
+            btn.classList.toggle('text-white');
+            showToast("Audio toggled successfully.");
+        }
+
+        function toggleVideoCam() {
+            const btn = document.getElementById('camBtn');
+            btn.classList.toggle('bg-red-600');
+            btn.classList.toggle('text-white');
+            showToast("Camera toggled successfully.");
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            if (!input.value.trim()) return;
+            const msgs = document.getElementById('chatMessages');
+            msgs.innerHTML += `
+                <div class="bg-brand-600/20 border border-brand-500/30 p-3 rounded-2xl max-w-[80%] ml-auto space-y-1">
+                    <span class="font-black text-brand-400">You (Verified Peer)</span>
+                    <p class="text-slate-100">${input.value}</p>
+                    <span class="text-[9px] text-slate-400 block text-right">Just now</span>
+                </div>
+            `;
+            input.value = '';
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function sendVoiceNote() {
+            const msgs = document.getElementById('chatMessages');
+            msgs.innerHTML += `
+                <div class="bg-slate-800 p-3 rounded-2xl max-w-[80%] ml-auto space-y-1 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-brand-500 text-white flex items-center justify-center"><i class="fa-solid fa-play"></i></div>
+                    <div class="flex-1">
+                        <span class="font-black text-brand-400 text-[10px] block">Voice Note (0:14)</span>
+                        <div class="h-1.5 w-full bg-slate-700 rounded-full mt-1 overflow-hidden"><div class="h-full bg-brand-400 w-3/4"></div></div>
+                    </div>
+                </div>
+            `;
+            msgs.scrollTop = msgs.scrollHeight;
+            showToast("Voice note transferred securely within neighborhood mesh!");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toastMsg');
+            msgEl.textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 4000);
+        }
+    </script>
+</body>
+</html>
